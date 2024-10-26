@@ -95,37 +95,15 @@
                 return;
             }
 
-            // Mengatur panjang biner jika salah satu bilangan negatif
-            let a = binary1;
-            let b = binary2;
-
-            if (a.length === b.length && (sign1 === 'negative-2' || sign2 === 'negative-2')) {
-                if (sign1 === 'negative-2') {
-                    a = '1' + a; // Tambahkan 1 di depan untuk bilangan negatif
-                } else {
-                    a = '0' + a; // Tambahkan 0 di depan untuk bilangan positif
-                }
-
-                if (sign2 === 'negative-2') {
-                    b = '1' + b; // Tambahkan 1 di depan untuk bilangan negatif
-                } else {
-                    b = '0' + b; // Tambahkan 0 di depan untuk bilangan positif
-                }
-            }
+            // Tambahkan bit 0 di depan bilangan positif atau 1 untuk negatif agar panjang sama
+            let a = binary1.padStart(Math.max(binary1.length, binary2.length), sign1 === 'negative-2' ? '1' : '0');
+            let b = binary2.padStart(Math.max(binary1.length, binary2.length), sign2 === 'negative-2' ? '1' : '0');
 
             // Tambahkan biner
-            const [sum, overflow] = binaryAddition(a, b);
+            const sum = binaryAddition(a, b);
 
             // Interpretasikan hasil Two's Complement untuk bilangan negatif
-            let decimalResult = parseInt(sum, 2);
-            if (overflow) {
-                decimalResult -= Math.pow(2, sum.length); // Mengurangi nilai overflow
-            }
-
-            if (sum[0] === '1') {
-                // Jika hasil dimulai dengan 1, berarti negatif dalam two's complement
-                decimalResult = -((1 << sum.length) - decimalResult);
-            }
+            let decimalResult = binaryToDecimal(sum);
 
             resultDisplay.innerHTML = `<div class="binary-display">Result: ${sum} (Decimal: ${decimalResult})</div>`;
         }
@@ -143,11 +121,25 @@
                 result = (sum % 2) + result; // Hitung bit hasil
                 carry = Math.floor(sum / 2); // Hitung carry untuk bit selanjutnya
             }
+            return result; // Kembalikan hasil dan status overflow
+        }
 
-            if (carry) {
-                result = '1' + result; // Jika ada carry yang tersisa, tambahkan di depan
+        function binaryToDecimal(binaryStr) {
+            const isNegative = binaryStr[0] === '1';  // Jika MSB adalah 1, itu adalah bilangan negatif
+            const bitLength = binaryStr.length;
+
+            if (isNegative) {
+                // Two's Complement: Invert bits and add 1 for negative number
+                let inverted = '';
+                for (let i = 0; i < bitLength; i++) {
+                    inverted += binaryStr[i] === '1' ? '0' : '1';
+                }
+                const positiveBinary = (parseInt(inverted, 2) + 1).toString(2).padStart(bitLength, '0');
+                const positiveDecimal = parseInt(positiveBinary, 2);
+                return -positiveDecimal; // Bilangan negatif
+            } else {
+                return parseInt(binaryStr, 2); // Bilangan positif
             }
-            return [result, carry > 0]; // Kembalikan hasil dan status overflow
         }
     </script>
 </body>
