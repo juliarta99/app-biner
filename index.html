@@ -99,7 +99,9 @@
             </div>
         </div>
     </div>
-    
+
+    <footer class="mt-4 text-secondary fs-6">&copy Kelompok 3 - Matematika Diskrit Kelas A Informatika Udayana</footer>
+
     <script>
         function validateBinaryInput(input) {
             input.value = input.value.replace(/[^01]/g, '');
@@ -115,7 +117,7 @@
             resultDisplay.innerHTML = '';
 
             if (!binaryInput) {
-                resultDisplay.innerHTML = "<p style='color:red;'>Please enter a binary number</p>";
+                resultDisplay.innerHTML = "<p style='color:red;'>Masukkan bilangan biner terlebih dahulu!</p>";
                 return;
             }
 
@@ -133,7 +135,7 @@
             resultDisplay.innerHTML = '';
 
             if (!decimalInput) {
-                resultDisplay.innerHTML = "<p style='color:red;'>Please enter a decimal number</p>";
+                resultDisplay.innerHTML = "<p style='color:red;'>Masukkan bilangan desimal terlebih dahulu!</p>";
                 return;
             }
 
@@ -153,7 +155,7 @@
             resultDisplay.innerHTML = '';
 
             if (!binary1 || !binary2 || !operation) {
-                resultDisplay.innerHTML = "<p style='color:red;'>Please enter both binary numbers and select an operation.</p>";
+                resultDisplay.innerHTML = "<p style='color:red;'>Masukkan bilangan biner dan operasinya terlebih dahulu!.</p>";
                 return;
             }
 
@@ -219,8 +221,8 @@
             resultDisplay.innerHTML = `<div class="card">
                                             <div class="card-header">Hasil</div>
                                             <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">Komplemen 1 : <span class="fw-bold">${result.one}</span></li>
-                                                <li class="list-group-item">Komplemen 2 : <span class="fw-bold">${result.two}</span></li>
+                                                <li class="list-group-item">Komplemen 1 : <span class="text-danger fw-bold">1</span><span class="fw-bold">${result.one}</span></li>
+                                                <li class="list-group-item">Komplemen 2 : <span class="text-danger fw-bold">1</span><span class="fw-bold">${result.two}</span></li>
                                             </ul>
                                         </div>`;
         }
@@ -232,11 +234,9 @@
             
             var ones, twos; 
             ones = twos = "";
-            
             for (i = 0; i < n; i++) {
                 ones += flip(a[i]); 
             }
-
             twos = ones; 
             twos = twos.split('') 
             for (i = n - 1; i >= 0; i--) { 
@@ -257,37 +257,30 @@
         
         function operationNegativeAddition() {
             const binary1 = document.getElementById('biner-n-1').value;
-            const binary2 = document.getElementById('biner-n-1').value;
+            const binary2 = document.getElementById('biner-n-2').value;
             const sign1 = document.getElementById('sign-n-1').value;
             const sign2 = document.getElementById('sign-n-2').value;
             let resultDisplay = document.getElementById('resultOperationNegative');
             resultDisplay.innerHTML = '';
 
-            if ((sign1 === 'positive' && binary1[0] !== '0') || (sign1 === 'negative-2' && binary1[0] !== '1')) {
+            if ((sign1 === 'positive' && binary1[0] != '0') || (sign1 === 'negative-2' && binary1[0] != '1')) {
                 resultDisplay.innerHTML = "<p style='color:red;'>Error: First binary number must start with '0' for positive and '1' for negative.</p>";
                 return;
             }
-            
-            if ((sign2 === 'positive' && binary2[0] !== '0') || (sign2 === 'negative-2' && binary2[0] !== '1')) {
+            if ((sign2 === 'positive' && binary2[0] != '0') || (sign2 === 'negative-2' && binary2[0] != '1')) {
                 resultDisplay.innerHTML = "<p style='color:red;'>Error: Second binary number must start with '0' for positive and '1' for negative.</p>";
                 return;
             }
-
             if (!binary1 || !binary2) {
                 resultDisplay.innerHTML = "<p style='color:red;'>Please enter both binary numbers.</p>";
                 return;
             }
 
-            // Tambahkan bit 0 di depan bilangan positif atau 1 untuk negatif agar panjang sama
             let a = binary1.padStart(Math.max(binary1.length, binary2.length), sign1 === 'negative-2' ? '1' : '0');
             let b = binary2.padStart(Math.max(binary1.length, binary2.length), sign2 === 'negative-2' ? '1' : '0');
-
-            // Tambahkan biner
             const sum = binaryHasNegativeAddition(a, b);
 
-            // Interpretasikan hasil Two's Complement untuk bilangan negatif
             let decimalResult = binaryHasNegativeToDecimal(sum);
-
             resultDisplay.innerHTML = `<div class="card">
                                             <div class="card-header">Hasil</div>
                                             <ul class="list-group list-group-flush">
@@ -307,14 +300,14 @@
                 let bitB = parseInt(b[i], 10) || 0;
                 let sum = bitA + bitB + carry;
 
-                result = (sum % 2) + result; // Hitung bit hasil
-                carry = Math.floor(sum / 2); // Hitung carry untuk bit selanjutnya
+                result = (sum % 2) + result;
+                carry = Math.floor(sum / 2);
             }
-            return result; // Kembalikan hasil dan status overflow
+            return result;
         }
 
         function binaryHasNegativeToDecimal(binaryStr) {
-            const isNegative = binaryStr[0] === '1';  // Jika MSB adalah 1, itu adalah bilangan negatif
+            const isNegative = binaryStr[0] === '1';
             const bitLength = binaryStr.length;
 
             if (isNegative) {
