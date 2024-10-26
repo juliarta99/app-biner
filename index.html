@@ -78,22 +78,22 @@
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOperationNegative">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOperationNegative" aria-expanded="false" aria-controls="collapseOperationNegative">
-                    Operasi Aritmatika Biner (berisi Biner Negatif)
+                    Operasi Pertambahan Biner (berisi Biner Negatif)
                 </button>
             </h2>
             <div id="collapseOperationNegative" class="accordion-collapse collapse" aria-labelledby="headingOperationNegative" data-bs-parent="#conversionAccordion">
                 <div class="accordion-body">
-                    <input type="number" class="form-control" id="biner-n-1" placeholder="Masukkan bilangan biner pertama" pattern="[01]*" maxlength="20" oninput="validateBinaryInput(this)">
-                    <input type="number" class="form-control mt-3" id="biner-n-2" placeholder="Masukkan bilangan biner kedua" pattern="[01]*" maxlength="20" oninput="validateBinaryInput(this)">
-                    
-                    <select id="operation" class="form-select mt-3">
-                        <option value="">Select operation</option>
-                        <option value="add">+ (Pertambahan)</option>
-                        <option value="subtract">- (Pengurangan)</option>
-                        <option value="multiply">* (Perkalian)</option>
-                        <option value="divide">/ (Pembagian)</option>
+                    <input type="number" class="form-control" id="biner-n-1" placeholder="Masukkan bilangan biner pertama" pattern="[01]*" maxlength="20" oninput="validateBinaryInput(this)" />
+                    <select class="form-select mt-3" id="sign-n-1">
+                        <option value="positive">Positive</option>
+                        <option value="negative-2">Negative (Two's Complement)</option>
                     </select>
-                    <button onclick="performOperation()" class="btn btn-primary mt-3">Hitung</button>
+                    <input type="number" class="form-control mt-3" id="biner-n-2" placeholder="Masukkan bilangan biner kedua" pattern="[01]*" maxlength="20" oninput="validateBinaryInput(this)"/>
+                    <select class="form-select mt-3" id="sign-n-2">
+                        <option value="positive">Positive</option>
+                        <option value="negative-2">Negative (Two's Complement)</option>
+                    </select>
+                    <button onclick="operationNegativeAddition()" class="btn btn-primary mt-3">Tambah</button>
                     <div class="mt-3" id="resultOperationNegative"></div>
                 </div>
             </div>
@@ -260,8 +260,18 @@
             const binary2 = document.getElementById('biner-n-1').value;
             const sign1 = document.getElementById('sign-n-1').value;
             const sign2 = document.getElementById('sign-n-2').value;
-            let resultDisplay = document.getElementById('result');
-            resultDisplay.innerHTML = '';  // Clear previous result
+            let resultDisplay = document.getElementById('resultOperationNegative');
+            resultDisplay.innerHTML = '';
+
+            if ((sign1 === 'positive' && binary1[0] !== '0') || (sign1 === 'negative-2' && binary1[0] !== '1')) {
+                resultDisplay.innerHTML = "<p style='color:red;'>Error: First binary number must start with '0' for positive and '1' for negative.</p>";
+                return;
+            }
+            
+            if ((sign2 === 'positive' && binary2[0] !== '0') || (sign2 === 'negative-2' && binary2[0] !== '1')) {
+                resultDisplay.innerHTML = "<p style='color:red;'>Error: Second binary number must start with '0' for positive and '1' for negative.</p>";
+                return;
+            }
 
             if (!binary1 || !binary2) {
                 resultDisplay.innerHTML = "<p style='color:red;'>Please enter both binary numbers.</p>";
