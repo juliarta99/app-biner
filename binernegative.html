@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Addition with Two's Complement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        .container {
+            margin: 20px 0;
+        }
+        .binary-display {
+            font-family: monospace;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Binary Addition with Two's Complement</h2>
+    
+    <div class="container">
+        <h3>Input First Binary Number</h3>
+        <input type="text" id="binary1" placeholder="Enter first binary number" />
+        <select id="sign1">
+            <option value="positive">Positive</option>
+            <option value="negative-2">Negative (Two's Complement)</option>
+        </select>
+
+        <h3>Input Second Binary Number</h3>
+        <input type="text" id="binary2" placeholder="Enter second binary number" />
+        <select id="sign2">
+            <option value="positive">Positive</option>
+            <option value="negative-2">Negative (Two's Complement)</option>
+        </select>
+
+        <button onclick="performAddition()">Add</button>
+    </div>
+
+    <div class="result-container" id="result"></div>
+
+    <script>
+        function performAddition() {
+            const binary1 = document.getElementById('binary1').value;
+            const binary2 = document.getElementById('binary2').value;
+            const sign1 = document.getElementById('sign1').value;
+            const sign2 = document.getElementById('sign2').value;
+            let resultDisplay = document.getElementById('result');
+            resultDisplay.innerHTML = '';  // Clear previous result
+
+            if (!binary1 || !binary2) {
+                resultDisplay.innerHTML = "<p style='color:red;'>Please enter both binary numbers.</p>";
+                return;
+            }
+
+            // Mengatur panjang biner jika salah satu bilangan negatif
+            let a = binary1;
+            let b = binary2;
+
+            if (a.length === b.length && (sign1 === 'negative-2' || sign2 === 'negative-2')) {
+                if (sign1 === 'negative-2') {
+                    a = '1' + a; // Tambahkan 1 di depan untuk bilangan negatif
+                } else {
+                    a = '0' + a; // Tambahkan 0 di depan untuk bilangan positif
+                }
+
+                if (sign2 === 'negative-2') {
+                    b = '1' + b; // Tambahkan 1 di depan untuk bilangan negatif
+                } else {
+                    b = '0' + b; // Tambahkan 0 di depan untuk bilangan positif
+                }
+            }
+
+            // Tambahkan biner
+            const [sum, overflow] = binaryAddition(a, b);
+
+            // Interpretasikan hasil Two's Complement untuk bilangan negatif
+            let decimalResult = parseInt(sum, 2);
+            if (overflow) {
+                decimalResult -= Math.pow(2, sum.length); // Mengurangi nilai overflow
+            }
+
+            if (sum[0] === '1') {
+                // Jika hasil dimulai dengan 1, berarti negatif dalam two's complement
+                decimalResult = -((1 << sum.length) - decimalResult);
+            }
+
+            resultDisplay.innerHTML = `<div class="binary-display">Result: ${sum} (Decimal: ${decimalResult})</div>`;
+        }
+
+        function binaryAddition(a, b) {
+            let carry = 0;
+            let result = '';
+            let maxLength = Math.max(a.length, b.length);
+
+            for (let i = maxLength - 1; i >= 0; i--) {
+                let bitA = parseInt(a[i], 10) || 0;
+                let bitB = parseInt(b[i], 10) || 0;
+                let sum = bitA + bitB + carry;
+
+                result = (sum % 2) + result; // Hitung bit hasil
+                carry = Math.floor(sum / 2); // Hitung carry untuk bit selanjutnya
+            }
+
+            if (carry) {
+                result = '1' + result; // Jika ada carry yang tersisa, tambahkan di depan
+            }
+            return [result, carry > 0]; // Kembalikan hasil dan status overflow
+        }
+    </script>
+</body>
+</html>
